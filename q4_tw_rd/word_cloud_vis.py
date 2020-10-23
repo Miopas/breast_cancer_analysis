@@ -18,17 +18,19 @@ def preprocess(text):
 if __name__ == '__main__':
     infile = sys.argv[1]
     df = pd.read_csv(infile)
-    print('data size:{}'.format(len(df)))
 
     col_name = 'text'
-    try:
-        df[col_name]
-    except:
+    if col_name not in df.columns:
         col_name = 'Text'
 
     texts = []
-    for text in df[col_name]:
+    #for text in df[col_name]:
+    for i, row in df.iterrows():
+        if 'Class' in df.columns and row['Class'] == 0:
+            continue
+        text = row[col_name]
         texts.append(preprocess(str(text)))
+    print('data size:{}'.format(len(texts)))
     all_text = ' '.join(texts)
 
     for t in filter_tokens:
@@ -38,6 +40,6 @@ if __name__ == '__main__':
     plt.figure(figsize=(12,10))
     plt.imshow(wordcloud, interpolation='bilinear')
     plt.axis("off")
-    plt.title('Input:{}, Size:{}'.format(infile, len(df)))
+    plt.title('Input:{}, Size:{}'.format(infile, len(texts)))
     #plt.show()
     plt.savefig(infile+'.png')
