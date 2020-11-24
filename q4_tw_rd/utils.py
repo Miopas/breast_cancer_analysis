@@ -14,17 +14,17 @@ def preprocessing(raw_text):
     sw = stopwords.words('english')
     words = []
     for w in raw_text.lower().split():
-        # remove stop words
-        if not w in sw:
-            # remove non-ascii characters
-            s = re.sub(r'[^\x00-\x7f]', r'', w)
-            ss = re.sub(r'https?:\/\/.*', r'', s)
-            if ss != '':
-                words.append(ss)
+        # remove non-ascii characters
+        s = re.sub(r'[^\x00-\x7f]', r'', w)
+        ss = re.sub(r'https?:\/\/.*', r'', s)
+        if ss != '':
+            words.append(ss)
     doc = nlp(" ".join(words))
     words_lemmatized = [token.lemma_ for token in doc if token.pos_ in ['NOUN', 'ADJ', 'VERB', 'ADV']]
-    # remove some specific words, like "breast", "cancer", "#"
-    words_lemmatized2 = [x for x in words_lemmatized if (x not in ["#", "-", "breast", "cancer", "breastcancer"]) and (len(x) > 1)]
+    # remove stopwords, and some specific words, e.g. "breast", "cancer", "#"
+    newStopWords = ['breast', 'cancer', 'breastcancer', 'go', 'will', 'be', 'can', 'just', 'also', '#', '-', '!', ',',
+                    '.', '?', '-s', '-ly', '</s>', 's', '’', '%', 'would', 'could']
+    words_lemmatized2 = [x for x in words_lemmatized if (x not in sw) and (x not in newStopWords) and (len(x) > 1)]
     return words_lemmatized2
 
 
